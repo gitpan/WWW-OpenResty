@@ -1,0 +1,110 @@
+NAME
+    WWW::OpenResty - Client-side library for OpenResty servers
+
+VERSION
+    This document describes "WWW::OpenResty" 0.01 released on Mar 3, 2008.
+
+SYNOPSIS
+        use WWW::OpenResty;
+
+        my $resty = WWW::OpenResty->new(
+            { server => 'http://resty.eeeeworks.org' }
+        );
+
+        # returns an HTTP::Response object
+        my $res = $resty->get('/=/version');
+        if ($res->is_success) {
+            print $res->content;
+        } else {
+            die $res->status_line;
+        }
+
+        $res = $resty->get(
+            '/=/model/Post/~/~',
+            { user => 'agentzh.Public', offset => 3, limit => 10 }
+        );
+
+        $resty->login($user, $password);
+        $resty->delete('/=/model');  # delete all the models
+        $resty->delete('/=/model/Foo');  # delete the Foo model
+        $res = $resty->get('/=/role');  # get the role list
+
+        # create model Post
+        $res = $resty->post('
+          {
+            description: "Blog post",
+            columns: [
+                { name: "title", label: "Post title" },
+                { name: "content", label: "Post content" },
+                { name: "author", label: "Post author" },
+                { name: "created", default: ["now()"],
+                  type: "timestamp(0) with time zone",
+                  label: "Post creation time" },
+                { name: "comments", label: "Number of comments",
+                  default: 0 }
+            ]
+          }
+        ', '/=/model/Post.json');
+
+        # modify the label for the model column "title":
+        $res = $resty->put('{ label: "blah!" }', '/=/model/Post/title');
+
+DESCRIPTION
+    "WWW::OpenResty" wraps an LWP::UserAgent object and serves as a client
+    for OpenResty servers.
+
+    This module is still under ative development and we definitely need more
+    POD and tests. We're just following the "release early, release often"
+    guideline. Please check back often :P
+
+    But most of the time, you just need its subclass WWW::OpenResty::Simple
+    which provides a more friendly interface and with automatic error
+    checking support.
+
+METHODS
+    TODO...
+
+SOURCE CONTROL
+    For the very latest version of this module, check out the source from
+    the SVN repos below:
+
+    <http://svn.openfoundry.org/wwwopenresty>
+
+    There is anonymous access to all. If you'd like a commit bit, please let
+    us know. :)
+
+BUGS
+    Please report bugs or send wish-list to
+    <http://rt.cpan.org/NoAuth/Bugs.html?Dist=WWW-OpenResty>.
+
+SEE ALSO
+    OpenResty, HTTP::Response.
+
+AUTHOR
+    agentzh "<agentzh at yahoo.cn>"
+
+COPYRIGHT
+    Copyright (c) 2008 by Yahoo! China EEEE Works, Alibaba Inc.
+
+License
+    The "MIT" License
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
+
+    The above copyright notice and this permission notice shall be included
+    in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
