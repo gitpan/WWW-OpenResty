@@ -1,8 +1,9 @@
 --- 
 abstract: Client-side library for OpenResty servers
-author: Agent Zhang <agentzh@yahoo.cn>
+author: 
+  - Agent Zhang <agentzh@yahoo.cn>
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.68
 license: perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -13,5 +14,10 @@ no_index:
     - inc
     - t
 requires: 
+  Carp: 0
+  Data::Dumper: 0
+  LWP::UserAgent: 0
+  Params::Util: 0.31
+  YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.01
+version: 0.02

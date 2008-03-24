@@ -9,7 +9,7 @@ use Params::Util qw( _HASH0 );
 use LWP::UserAgent;
 use Data::Dumper;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
     ### @_
@@ -18,6 +18,9 @@ sub new {
     ### $params
     my $server = delete $params->{server} or
         croak "No server specified.";
+    if ($server !~ m{^\w+://}) {
+        $server = "http://$server";
+    }
     my $timer = delete $params->{timer};
     my $ua = LWP::UserAgent->new;
     $ua->cookie_jar({ file => "cookies.txt" });
@@ -44,13 +47,13 @@ sub get {
 
 sub post {
     my $self = shift;
-    my $content = shift;
+    my $content = pop;
     $self->request($content, 'POST', @_);
 }
 
 sub put {
     my $self = shift;
-    my $content = shift;
+    my $content = pop;
     $self->request($content, 'PUT', @_);
 }
 
@@ -63,6 +66,7 @@ sub request {
     my ($self, $content, $method, $url, $params) = @_;
     !defined $params or _HASH0($params) or
         die "Params must be a hash: ", Dumper($params), "\n";
+    !ref $url or die "URL is of the wrong type: ", Dumper($url), "\n";
     if ($params && %$params) {
         if ($url =~ /\?/) {
             die "? not allowed when params specified.\n";
@@ -109,7 +113,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.01 released on Mar 3, 2008.
+This document describes C<WWW::OpenResty> 0.02 released on Mar 3, 2008.
 
 =head1 SYNOPSIS
 
@@ -138,24 +142,25 @@ This document describes C<WWW::OpenResty> 0.01 released on Mar 3, 2008.
     $res = $resty->get('/=/role');  # get the role list
 
     # create model Post
-    $res = $resty->post('
-      {
-        description: "Blog post",
-        columns: [
-            { name: "title", label: "Post title" },
-            { name: "content", label: "Post content" },
-            { name: "author", label: "Post author" },
-            { name: "created", default: ["now()"],
-              type: "timestamp(0) with time zone",
-              label: "Post creation time" },
-            { name: "comments", label: "Number of comments",
-              default: 0 }
-        ]
-      }
-    ', '/=/model/Post.json');
+    $res = $resty->post(
+        '/=/model/Post.json',
+        '{
+            description: "Blog post",
+            columns: [
+                { name: "title", label: "Post title" },
+                { name: "content", label: "Post content" },
+                { name: "author", label: "Post author" },
+                { name: "created", default: ["now()"],
+                type: "timestamp(0) with time zone",
+                label: "Post creation time" },
+                { name: "comments", label: "Number of comments",
+                default: 0 }
+            ]
+        }'
+    );
 
     # modify the label for the model column "title":
-    $res = $resty->put('{ label: "blah!" }', '/=/model/Post/title');
+    $res = $resty->put('/=/model/Post/title', '{ label: "blah!" }');
 
 =head1 DESCRIPTION
 
@@ -170,7 +175,27 @@ which provides a more friendly interface and with automatic error checking suppo
 
 =head1 METHODS
 
-TODO...
+=over
+
+=item C<< $res = $obj->login($user, $password) >>
+
+=item C<< $res = $obj->get($url) >>
+
+=item C<< $res = $obj->get($url, $url_params) >>
+
+=item C<< $res = $obj->post($url, $content) >>
+
+=item C<< $res = $obj->post($url, $url_params, $content) >>
+
+=item C<< $res = $obj->put($url, $content) >>
+
+=item C<< $res = $obj->put($url, $url_params, $content) >>
+
+=item C<< $res = $obj->delete($url) >>
+
+=item C<< $res = $obj->delete($url, $url_params) >>
+
+=back
 
 =head1 SOURCE CONTROL
 

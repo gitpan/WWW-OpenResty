@@ -2,7 +2,7 @@ NAME
     WWW::OpenResty - Client-side library for OpenResty servers
 
 VERSION
-    This document describes "WWW::OpenResty" 0.01 released on Mar 3, 2008.
+    This document describes "WWW::OpenResty" 0.02 released on Mar 3, 2008.
 
 SYNOPSIS
         use WWW::OpenResty;
@@ -30,24 +30,25 @@ SYNOPSIS
         $res = $resty->get('/=/role');  # get the role list
 
         # create model Post
-        $res = $resty->post('
-          {
-            description: "Blog post",
-            columns: [
-                { name: "title", label: "Post title" },
-                { name: "content", label: "Post content" },
-                { name: "author", label: "Post author" },
-                { name: "created", default: ["now()"],
-                  type: "timestamp(0) with time zone",
-                  label: "Post creation time" },
-                { name: "comments", label: "Number of comments",
-                  default: 0 }
-            ]
-          }
-        ', '/=/model/Post.json');
+        $res = $resty->post(
+            '/=/model/Post.json',
+            '{
+                description: "Blog post",
+                columns: [
+                    { name: "title", label: "Post title" },
+                    { name: "content", label: "Post content" },
+                    { name: "author", label: "Post author" },
+                    { name: "created", default: ["now()"],
+                    type: "timestamp(0) with time zone",
+                    label: "Post creation time" },
+                    { name: "comments", label: "Number of comments",
+                    default: 0 }
+                ]
+            }'
+        );
 
         # modify the label for the model column "title":
-        $res = $resty->put('{ label: "blah!" }', '/=/model/Post/title');
+        $res = $resty->put('/=/model/Post/title', '{ label: "blah!" }');
 
 DESCRIPTION
     "WWW::OpenResty" wraps an LWP::UserAgent object and serves as a client
@@ -62,7 +63,15 @@ DESCRIPTION
     checking support.
 
 METHODS
-    TODO...
+    "$res = $obj->login($user, $password)"
+    "$res = $obj->get($url)"
+    "$res = $obj->get($url, $url_params)"
+    "$res = $obj->post($url, $content)"
+    "$res = $obj->post($url, $url_params, $content)"
+    "$res = $obj->put($url, $content)"
+    "$res = $obj->put($url, $url_params, $content)"
+    "$res = $obj->delete($url)"
+    "$res = $obj->delete($url, $url_params)"
 
 SOURCE CONTROL
     For the very latest version of this module, check out the source from

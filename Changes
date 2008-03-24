@@ -1,5 +1,10 @@
 Change Log for WWW::OpenResty
 
+0.02 Mar 19 2008
+* Changed the param order of the post and put methods of
+  both WWW::OpenResty and WWW::OpenResty::Simple.
+* Added POD to WWW::OpenResty::Simple.
+
 0.01 Mar 3 2008
 * initial CPAN release
 
