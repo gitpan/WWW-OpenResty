@@ -9,7 +9,7 @@ use Params::Util qw( _HASH0 );
 use LWP::UserAgent;
 use Data::Dumper;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub new {
     ### @_
@@ -114,7 +114,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.03 released on Mar 28, 2008.
+This document describes C<WWW::OpenResty> 0.04 released on Mar 28, 2008.
 
 =head1 SYNOPSIS
 

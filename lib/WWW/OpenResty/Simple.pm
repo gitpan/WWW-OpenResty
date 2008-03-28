@@ -8,7 +8,7 @@ use JSON::XS ();
 use base 'WWW::OpenResty';
 use Params::Util qw( _HASH );
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 sub request {
@@ -34,28 +34,32 @@ sub request {
 
 sub has_model {
     my ($self, $model) = @_;
+    my $res;
     eval {
-        $self->get("/=/model/$model");
+        $res = $self->get("/=/model/$model");
     };
-    if ($@ && $@ =~ /Model .*? not found/i) {
-        return undef;
-    } else {
+    if ($@) {
+        if ($@ =~ /Model .*? not found/i) {
+            return undef;
+        }
         die $@;
     }
-    return 1;
+    return _HASH($res) && $res->{name} eq $model;
 }
 
 sub has_view {
     my ($self, $view) = @_;
+    my $res;
     eval {
-        $self->get("/=/view/$view");
+        $res = $self->get("/=/view/$view");
     };
-    if ($@ && $@ =~ /View .*? not found/i) {
-        return undef;
-    } else {
+    if ($@) {
+        if ($@ =~ /View .*? not found/i) {
+            return undef;
+        }
         die $@;
     }
-    return 1;
+    return _HASH($res) && $res->{name} eq $view;
 }
 
 1;
@@ -67,7 +71,7 @@ WWW::OpenResty::Simple - A simple wrapper around WWW::OpenResty
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty::Simple> 0.03 released on Mar 28,
+This document describes C<WWW::OpenResty::Simple> 0.04 released on Mar 28,
 2008.
 
 =head1 SYNOPSIS

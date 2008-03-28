@@ -1,5 +1,8 @@
 Change Log for WWW::OpenResty
 
+0.04 Mar 29 2008
+* Fixed a bug in the has_model and has_view methods.
+
 0.03 Mar 28 2008
 * Added methods has_model and has_view to WWW::OpenResty::Simple.
 * Using croak now for better diagnostics.
