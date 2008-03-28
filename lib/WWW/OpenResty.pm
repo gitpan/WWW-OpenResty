@@ -4,12 +4,12 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
-use Carp;
+use Carp qw(croak);
 use Params::Util qw( _HASH0 );
 use LWP::UserAgent;
 use Data::Dumper;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub new {
     ### @_
@@ -65,11 +65,11 @@ sub delete {
 sub request {
     my ($self, $content, $method, $url, $params) = @_;
     !defined $params or _HASH0($params) or
-        die "Params must be a hash: ", Dumper($params), "\n";
-    !ref $url or die "URL is of the wrong type: ", Dumper($url), "\n";
+        croak "Params must be a hash: ", Dumper($params);
+    !ref $url or croak "URL is of the wrong type: ", Dumper($url);
     if ($params && %$params) {
         if ($url =~ /\?/) {
-            die "? not allowed when params specified.\n";
+            croak "? not allowed when params specified";
         } else {
             my @params;
             while (my ($key, $val) = each %$params) {
@@ -89,7 +89,7 @@ sub request {
     $req->url($url);
     if ($content) {
         if ($method eq 'GET' or $method eq 'HEAD') {
-            die "HTTP 1.0/1.1 $method request should not have content: $content\n";
+            croak "HTTP 1.0/1.1 $method request should not have content: $content";
         }
 
         $req->content($content);
@@ -104,6 +104,7 @@ sub request {
     return $res;
 }
 
+
 1;
 __END__
 
@@ -113,7 +114,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.02 released on Mar 3, 2008.
+This document describes C<WWW::OpenResty> 0.03 released on Mar 28, 2008.
 
 =head1 SYNOPSIS
 

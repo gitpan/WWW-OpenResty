@@ -1,5 +1,10 @@
 Change Log for WWW::OpenResty
 
+0.03 Mar 28 2008
+* Added methods has_model and has_view to WWW::OpenResty::Simple.
+* Using croak now for better diagnostics.
+* Now we use JSON::XS instead of JSON::Syck.
+
 0.02 Mar 19 2008
 * Changed the param order of the post and put methods of
   both WWW::OpenResty and WWW::OpenResty::Simple.

@@ -3,12 +3,13 @@ package WWW::OpenResty::Simple;
 use strict;
 use warnings;
 
-#use Carp 'confess';
-use JSON::Syck ();
+use Carp 'croak';
+use JSON::XS ();
 use base 'WWW::OpenResty';
 use Params::Util qw( _HASH );
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
+our $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 sub request {
     my $self = shift;
@@ -16,18 +17,45 @@ sub request {
     my $meth = $_[1];
     my $url = $_[2];
     if ($data && ref $data) {
-        $_[0] = JSON::Syck::Dump($data);
+        $_[0] = $json_xs->encode($data);
     }
     my $res = $self->SUPER::request(@_);
     if ($res->is_success) {
         my $json = $res->content;
-        my $data = JSON::Syck::Load($json);
+        #$json =~ s/\n+$//gs;
+        my $data = $json_xs->decode($json);
         if (_HASH($data) && defined $data->{success} && $data->{success} == 0) {
-            die "$meth $url: $json\n";
+            croak "$meth $url: $json";
         }
         return $data;
     }
-    die "$meth $url: ", $res->status_line, "\n";
+    croak "$meth $url: ", $res->status_line;
+}
+
+sub has_model {
+    my ($self, $model) = @_;
+    eval {
+        $self->get("/=/model/$model");
+    };
+    if ($@ && $@ =~ /Model .*? not found/i) {
+        return undef;
+    } else {
+        die $@;
+    }
+    return 1;
+}
+
+sub has_view {
+    my ($self, $view) = @_;
+    eval {
+        $self->get("/=/view/$view");
+    };
+    if ($@ && $@ =~ /View .*? not found/i) {
+        return undef;
+    } else {
+        die $@;
+    }
+    return 1;
 }
 
 1;
@@ -39,7 +67,7 @@ WWW::OpenResty::Simple - A simple wrapper around WWW::OpenResty
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty::Simple> 0.02 released on Mar 19,
+This document describes C<WWW::OpenResty::Simple> 0.03 released on Mar 28,
 2008.
 
 =head1 SYNOPSIS
@@ -88,7 +116,8 @@ errors returned from the OpenResty server.
 =head1 METHODS
 
 This class exposes all the methods of its parent class, L<WWW:OpenResty>,
-like C<login>, C<get>, C<post>, C<put>, and C<delete>.
+like C<login>, C<get>, C<post>, C<put>, and C<delete>, as well as its own:
+C<has_view> and C<has_model>.
 
 Unlike the methods of L<WWW::OpenResty> returning a raw L<HTTP::Response>
 object, the methods in this class always return the Perl structure
@@ -99,6 +128,20 @@ Also, the C<$content> parameter in the C<post> and C<put> methods
 are plain Perl data structures rather than string literals. This class will
 automatically serialize the data structure into JSON before sending
 out via the HTTP protocol.
+
+=head1 METHODS
+
+=over
+
+=item C<< $bool = $resty->has_view($view_name) >>
+
+Check if the view given exists.
+
+=item C<< $bool = $resty->has_model($model_name) >>
+
+Check if the model given exists.
+
+=back
 
 =head1 AUTHOR
 

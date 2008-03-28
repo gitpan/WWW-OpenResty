@@ -2,6 +2,9 @@
 abstract: Client-side library for OpenResty servers
 author: 
   - Agent Zhang <agentzh@yahoo.cn>
+build_requires: 
+  Data::Dumper: 0
+  Test::More: 0
 distribution_type: module
 generated_by: Module::Install version 0.68
 license: perl
@@ -15,9 +18,8 @@ no_index:
     - t
 requires: 
   Carp: 0
-  Data::Dumper: 0
+  JSON::XS: 2.1
   LWP::UserAgent: 0
   Params::Util: 0.31
-  YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.02
+version: 0.03
