@@ -1,5 +1,8 @@
 Change Log for WWW::OpenResty
 
+0.05 Apr 4 2008
+* Added the retries option to WWW::OpenResty::Simple's constructor.
+
 0.04 Mar 29 2008
 * Fixed a bug in the has_model and has_view methods.
 

@@ -22,4 +22,4 @@ requires:
   LWP::UserAgent: 0
   Params::Util: 0.31
   perl: 5.6.1
-version: 0.04
+version: 0.05

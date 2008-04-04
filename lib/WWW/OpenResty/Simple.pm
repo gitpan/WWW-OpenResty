@@ -8,7 +8,7 @@ use JSON::XS ();
 use base 'WWW::OpenResty';
 use Params::Util qw( _HASH );
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 our $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 sub request {
@@ -19,17 +19,32 @@ sub request {
     if ($data && ref $data) {
         $_[0] = $json_xs->encode($data);
     }
-    my $res = $self->SUPER::request(@_);
-    if ($res->is_success) {
-        my $json = $res->content;
-        #$json =~ s/\n+$//gs;
-        my $data = $json_xs->decode($json);
-        if (_HASH($data) && defined $data->{success} && $data->{success} == 0) {
-            croak "$meth $url: $json";
+    my $retries = $self->{retries} || 0;
+    my $i = 0;
+    while (1) {
+        my $res = $self->SUPER::request(@_);
+        if ($res->is_success) {
+            my $json = $res->content;
+            #$json =~ s/\n+$//gs;
+            my $data = $json_xs->decode($json);
+            if (_HASH($data) && defined $data->{success} && $data->{success} == 0) {
+                if ($i >= $retries) {
+                    croak "$meth $url: $json";
+                } else {
+                    warn "Retrying...\n";
+                }
+            } else {
+                return $data;
+            }
+        } else {
+            my $status_line = $res->status_line;
+            if ($i >= $retries) {
+                croak "$meth $url: $status_line";
+            } else {
+                warn "Retrying...\n";
+            }
         }
-        return $data;
-    }
-    croak "$meth $url: ", $res->status_line;
+    } continue { $i++ }
 }
 
 sub has_model {
@@ -71,7 +86,7 @@ WWW::OpenResty::Simple - A simple wrapper around WWW::OpenResty
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty::Simple> 0.04 released on Mar 28,
+This document describes C<WWW::OpenResty::Simple> 0.05 released on April 4,
 2008.
 
 =head1 SYNOPSIS
@@ -79,7 +94,10 @@ This document describes C<WWW::OpenResty::Simple> 0.04 released on Mar 28,
     use WWW::OpenResty::Simple;
 
     my $resty = WWW::OpenResty::Simple->new(
-        { server => 'http://resty.eeeeworks.org' }
+        {
+            server => 'http://resty.eeeeworks.org',
+            retries => 1 # retry once when failing (default to 0),
+        }
     );
 
     my $res;

@@ -9,7 +9,7 @@ use Params::Util qw( _HASH0 );
 use LWP::UserAgent;
 use Data::Dumper;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub new {
     ### @_
@@ -22,12 +22,14 @@ sub new {
         $server = "http://$server";
     }
     my $timer = delete $params->{timer};
+    my $retries = delete $params->{retries};
     my $ua = LWP::UserAgent->new;
     $ua->cookie_jar({ file => "cookies.txt" });
     bless {
         server => $server,
         ua => $ua,
         timer => $timer,
+        retries => $retries,
     }, $class;
 }
 
@@ -114,7 +116,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.04 released on Mar 28, 2008.
+This document describes C<WWW::OpenResty> 0.05 released on April 4, 2008.
 
 =head1 SYNOPSIS
 
