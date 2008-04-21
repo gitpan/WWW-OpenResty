@@ -18,8 +18,9 @@ no_index:
     - t
 requires: 
   Carp: 0
+  Digest::MD5: 0
   JSON::XS: 2.1
   LWP::UserAgent: 0
   Params::Util: 0.31
   perl: 5.6.1
-version: 0.05
+version: 0.06

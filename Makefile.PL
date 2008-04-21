@@ -12,6 +12,7 @@ requires            ('Params::Util' => '0.31');
 requires            ('JSON::XS' => '2.1');
 requires            ('LWP::UserAgent');
 requires            ('Carp');
+requires            ('Digest::MD5');
 
 build_requires      ('Test::More');
 build_requires      ('Data::Dumper');

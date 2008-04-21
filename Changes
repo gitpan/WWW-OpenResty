@@ -1,5 +1,8 @@
 Change Log for WWW::OpenResty
 
+0.06 Apr 21
+* Now use MD5 to preprocess the password for login (working with OpenResty server 0.2.x).
+
 0.05 Apr 4 2008
 * Added the retries option to WWW::OpenResty::Simple's constructor.
 

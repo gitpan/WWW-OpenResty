@@ -8,8 +8,9 @@ use Carp qw(croak);
 use Params::Util qw( _HASH0 );
 use LWP::UserAgent;
 use Data::Dumper;
+use Digest::MD5 qw(md5_hex);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub new {
     ### @_
@@ -39,6 +40,7 @@ sub content_type {
 
 sub login {
     my ($self, $user, $password) = @_;
+    $password = md5_hex($password);
     my $res = $self->get("/=/login/$user/$password?use_cookie=1");
 }
 
@@ -116,7 +118,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.05 released on April 4, 2008.
+This document describes C<WWW::OpenResty> 0.06 released on April 4, 2008.
 
 =head1 SYNOPSIS
 
