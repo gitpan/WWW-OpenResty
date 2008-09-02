@@ -10,7 +10,7 @@ use LWP::UserAgent;
 use Data::Dumper;
 use Digest::MD5 qw(md5_hex);
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 sub new {
     ### @_
@@ -80,13 +80,15 @@ sub request {
     if ($self->{_user}) {
         $params->{_user} ||= $self->{_user};
     }
-    if ($url =~ /\?/) {
-        croak "? not allowed when params specified";
+    my @params;
+    while (my ($key, $val) = each %$params) {
+        push @params, "$key=$val";
+    }
+    if ($url =~ /\?$/) {
+        $url .= join '&', @params;
+    } elsif ($url =~ /\?/) {
+        $url .= "&" . join '&', @params;
     } else {
-        my @params;
-        while (my ($key, $val) = each %$params) {
-            push @params, "$key=$val";
-        }
         $url .= "?" . join '&', @params;
     }
     my $type = $self->{content_type};
@@ -125,7 +127,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.07 released on September 2, 2008.
+This document describes C<WWW::OpenResty> 0.08 released on September 2, 2008.
 
 =head1 SYNOPSIS
 

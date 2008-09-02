@@ -1,5 +1,8 @@
 Change Log for WWW::OpenResty
 
+0.08 Sep 2 2008
+* Fixed the url params handling logic in request.
+
 0.07 Sep 2 2008
 * Use _use_cookie and _user options rather than the deprecated use_cookie and user options.
 * Now the login method allow signing in without a password.
