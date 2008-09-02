@@ -8,7 +8,7 @@ use JSON::XS ();
 use base 'WWW::OpenResty';
 use Params::Util qw( _HASH );
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 our $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 sub request {
@@ -20,6 +20,7 @@ sub request {
         $_[0] = $json_xs->encode($data);
     }
     my $retries = $self->{retries} || 0;
+    my $ignore_dup_error = $self->{ignore_dup_error};
     my $i = 0;
     while (1) {
         my $res = $self->SUPER::request(@_);
@@ -28,6 +29,11 @@ sub request {
             #$json =~ s/\n+$//gs;
             my $data = $json_xs->decode($json);
             if (_HASH($data) && defined $data->{success} && $data->{success} == 0) {
+                if ($ignore_dup_error &&
+                    $data->{error} =~ /duplicate key (?:value )?violates unique constraint/) {
+                    #print "Ignored
+                    return $data;
+                }
                 if ($i >= $retries) {
                     croak "$meth $url: $json";
                 } else {
@@ -86,7 +92,7 @@ WWW::OpenResty::Simple - A simple wrapper around WWW::OpenResty
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty::Simple> 0.06 released on April 4,
+This document describes C<WWW::OpenResty::Simple> 0.07 released on September 2,
 2008.
 
 =head1 SYNOPSIS

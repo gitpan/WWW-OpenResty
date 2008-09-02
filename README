@@ -2,7 +2,8 @@ NAME
     WWW::OpenResty - Client-side library for OpenResty servers
 
 VERSION
-    This document describes "WWW::OpenResty" 0.06 released on April 4, 2008.
+    This document describes "WWW::OpenResty" 0.07 released on September 2,
+    2008.
 
 SYNOPSIS
         use WWW::OpenResty;

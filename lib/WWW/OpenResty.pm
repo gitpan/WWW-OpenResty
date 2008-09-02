@@ -10,7 +10,7 @@ use LWP::UserAgent;
 use Data::Dumper;
 use Digest::MD5 qw(md5_hex);
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub new {
     ### @_
@@ -22,6 +22,7 @@ sub new {
     if ($server !~ m{^\w+://}) {
         $server = "http://$server";
     }
+    my $ignore_dup_error = delete $params->{ignore_dup_error};
     my $timer = delete $params->{timer};
     my $retries = delete $params->{retries};
     my $ua = LWP::UserAgent->new;
@@ -31,6 +32,7 @@ sub new {
         ua => $ua,
         timer => $timer,
         retries => $retries,
+        ignore_dup_error => $ignore_dup_error,
     }, $class;
 }
 
@@ -40,8 +42,11 @@ sub content_type {
 
 sub login {
     my ($self, $user, $password) = @_;
-    $password = md5_hex($password);
-    my $res = $self->get("/=/login/$user/$password?use_cookie=1");
+    if ($password) {
+        $password = md5_hex($password);
+        return $self->get("/=/login/$user/$password?_use_cookie=1");
+    }
+    $self->{_user} = $user;
 }
 
 sub get {
@@ -71,16 +76,18 @@ sub request {
     !defined $params or _HASH0($params) or
         croak "Params must be a hash: ", Dumper($params);
     !ref $url or croak "URL is of the wrong type: ", Dumper($url);
-    if ($params && %$params) {
-        if ($url =~ /\?/) {
-            croak "? not allowed when params specified";
-        } else {
-            my @params;
-            while (my ($key, $val) = each %$params) {
-                push @params, "$key=$val";
-            }
-            $url .= "?" . join '&', @params;
+    $params ||= {};
+    if ($self->{_user}) {
+        $params->{_user} ||= $self->{_user};
+    }
+    if ($url =~ /\?/) {
+        croak "? not allowed when params specified";
+    } else {
+        my @params;
+        while (my ($key, $val) = each %$params) {
+            push @params, "$key=$val";
         }
+        $url .= "?" . join '&', @params;
     }
     my $type = $self->{content_type};
     $type ||= 'text/plain';
@@ -118,7 +125,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.06 released on April 4, 2008.
+This document describes C<WWW::OpenResty> 0.07 released on September 2, 2008.
 
 =head1 SYNOPSIS
 
