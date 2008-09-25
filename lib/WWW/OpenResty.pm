@@ -10,7 +10,7 @@ use LWP::UserAgent;
 use Data::Dumper;
 use Digest::MD5 qw(md5_hex);
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 sub new {
     ### @_
@@ -127,7 +127,7 @@ WWW::OpenResty - Client-side library for OpenResty servers
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty> 0.08 released on September 2, 2008.
+This document describes C<WWW::OpenResty> 0.09 released on September 25, 2008.
 
 =head1 SYNOPSIS
 

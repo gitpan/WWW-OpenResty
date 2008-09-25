@@ -14,7 +14,7 @@ use Test::More tests => 19;
 
     my $res;
     eval {
-        $res = $resty->get('/=/version');
+        $res = $resty->get('/=/version/verbose');
     };
     ok !$@, 'no exception thrown';
     if ($@) { warn $@ }

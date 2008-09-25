@@ -1,5 +1,8 @@
 Change Log for WWW::OpenResty
 
+0.09 Sep 25 2008
+* Fixed the /=/version test since the Version API changed in a recent OpenResty release.
+
 0.08 Sep 2 2008
 * Fixed the url params handling logic in request.
 

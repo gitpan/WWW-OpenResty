@@ -8,7 +8,7 @@ use JSON::XS ();
 use base 'WWW::OpenResty';
 use Params::Util qw( _HASH );
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 our $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 sub request {
@@ -92,7 +92,7 @@ WWW::OpenResty::Simple - A simple wrapper around WWW::OpenResty
 
 =head1 VERSION
 
-This document describes C<WWW::OpenResty::Simple> 0.08 released on September 2,
+This document describes C<WWW::OpenResty::Simple> 0.09 released on September 25,
 2008.
 
 =head1 SYNOPSIS
